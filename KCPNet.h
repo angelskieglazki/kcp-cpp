@@ -167,6 +167,8 @@ public:
 
     virtual ~KCPNetServer();
 
+    void run();
+
     int sendData(const char* pData, size_t lSize, KCPContext* pCTX);
 
     int configureKCP(const std::function<void(const char*, size_t, KCPContext*)> &rGotData,

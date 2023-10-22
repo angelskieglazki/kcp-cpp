@@ -347,6 +347,13 @@ KCPNetServer::~KCPNetServer() {
     KCP_LOGGER(false, LOGG_NOTIFY, "KCPNetServer Destruct")
 }
 
+void KCPNetServer::run()
+{
+    while (mNetworkThreadRunning) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
+}
+
 int KCPNetServer::sendData(const char *pData, size_t lSize, KCPContext *pCTX) {
     std::lock_guard<std::mutex> lock(mKCPMapMtx);
     int lStatus = -1;
@@ -531,9 +538,13 @@ void KCPNetServer::netWorkerServer(const std::function<void(const char *, size_t
     char lBuffer[KCP_MAX_BYTES];
     while (true) {
         auto[received_bytes, status] = mKissnetSocket.recv(receiveBuffer,0, &receiveConnection);
-        if (!received_bytes || status != kissnet::socket_status::valid) {
+        if (status != kissnet::socket_status::valid) {
             KCP_LOGGER(false, LOGG_NOTIFY, "serverWorker quitting");
             break;
+        }
+        if (!received_bytes) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            continue;
         }
 
         if (mDropAll) continue;

@@ -47,3 +47,9 @@ target_link_libraries(kcpnet kcp Threads::Threads)
 
 add_executable(kcp_cpp main.cpp)
 target_link_libraries(kcp_cpp kcpnet Threads::Threads)
+
+add_executable(kcp_server server.cpp)
+target_link_libraries(kcp_server kcpnet Threads::Threads)
+
+add_executable(kcp_client client.cpp)
+target_link_libraries(kcp_client kcpnet Threads::Threads)
